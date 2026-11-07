@@ -23,13 +23,15 @@ library project ESPIDFAda is
          Crate_Languages_Ada_C := ("Ada", "C");
    end case;
 
+   Compiler_Switches_Ada := A0B_Common.Compiler_Switches_Ada;
+
    for Library_Name use "adaespidf";
    for Library_Dir use Crate_Library_Dir;
    for Object_Dir use Crate_Object_Dir;
    for Source_Dirs use ("source");
 
    package Compiler is
-      for Switches ("Ada") use A0B_Common.Compiler_Switches_Ada;
+      for Switches ("Ada") use Compiler_Switches_Ada;
       for Switches ("C") use ("-g", "-O2");
    end Compiler;
 
