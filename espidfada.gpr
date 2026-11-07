@@ -4,18 +4,18 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
-with "config/espidf_config.gpr";
+with "config/espidfada_config.gpr";
 
 with "a0b_common.gpr";
 
-library project ESPIDF is
+library project ESPIDFAda is
 
    Crate_Library_Dir := ".libs/" & A0B_Common.Library_Dir_Suffix;
    Crate_Object_Dir  := ".objs/" & A0B_Common.Object_Dir_Suffix;
 
    Crate_Languages_Ada_C := ();
 
-   case ESPIDF_Config.Build_Environment is
+   case ESPIDFAda_Config.Build_Environment is
       when "ada_only" =>
          Crate_Languages_Ada_C := ("Ada");
 
@@ -33,4 +33,4 @@ library project ESPIDF is
       for Switches ("C") use ("-g", "-O2");
    end Compiler;
 
-end ESPIDF;
+end ESPIDFAda;
