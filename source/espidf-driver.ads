@@ -4,9 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
-package ESPIDF.Driver with Pure is
-
-   type gpio_num_t is new int;
-   --  XXX Move to GPIO driver
+package ESPIDF.Driver
+  with Pure
+is
 
 end ESPIDF.Driver;
