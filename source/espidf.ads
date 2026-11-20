@@ -69,7 +69,9 @@ package ESPIDF with Pure is
    --  application.
 
    subtype TickType_t is uint32_t;
-   portMAX_DELAY : constant TickType_t := TickType_t'Last;
+   --  portMAX_DELAY : constant TickType_t := TickType_t'Last;
+   --  XXX It would be nice to don't expose this constant. Instead, C wrapper
+   --  around functions which accept this value should be used.
 
 private
 
