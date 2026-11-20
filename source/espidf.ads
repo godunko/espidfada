@@ -68,6 +68,9 @@ package ESPIDF with Pure is
    --  Raised when an ESP-IDF error occurs and not explicitly handled by the
    --  application.
 
+   subtype TickType_t is uint32_t;
+   portMAX_DELAY : constant TickType_t := TickType_t'Last;
+
 private
 
    --  `C_Storage_Element` and `C_Object_Storage` types are used to represent
