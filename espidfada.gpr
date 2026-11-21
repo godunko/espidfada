@@ -13,16 +13,6 @@ library project ESPIDFAda is
    Crate_Library_Dir := ".libs/" & A0B_Common.Library_Dir_Suffix;
    Crate_Object_Dir  := ".objs/" & A0B_Common.Object_Dir_Suffix;
 
-   Crate_Languages_Ada_C := ();
-
-   case ESPIDFAda_Config.Build_Environment is
-      when "ada_only" =>
-         Crate_Languages_Ada_C := ("Ada");
-
-      when "espidf" =>
-         Crate_Languages_Ada_C := ("Ada", "C");
-   end case;
-
    Compiler_Switches_Ada := A0B_Common.Compiler_Switches_Ada;
 
    for Library_Name use "adaespidf";
