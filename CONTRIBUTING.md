@@ -191,8 +191,15 @@ are configuration errors.
 
 Add `.gens` to GPR `Source_Dirs` and `/.gens/` to `.gitignore`; do not commit
 generated Ada sources. Use generated named numbers for storage bounds and
-`Alignment`. For record wrappers, check the outer record's size and alignment
-as well as its storage type. Preserve C conventions and initialization.
+`Alignment`, including on any outer record passed to C. Simple storage arrays
+do not need an additional size check; retain size checks for record wrappers.
+Do not add alignment checks when the same type explicitly specifies its
+alignment. Preserve C conventions and initialization.
+
+Use `private with` for a constants package referenced only in the private
+part. Format type declarations as in the examples above, with `with` on its
+own line and the aspects indented beneath it, matching the default VS Code
+formatting.
 
 The application's `espidf_add_ada_application` call must specify
 `DEPENDS espidfada_constants` so probe compilation and Ada generation finish
