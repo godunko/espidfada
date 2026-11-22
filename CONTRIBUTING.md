@@ -65,9 +65,10 @@ private
    type esp_partition_t is
      new C_Object_Storage
        (1 .. ESPIDF.Constants.Partition.sizeof_esp_partition_t)
-     with Convention              => C,
-          Alignment               => ESPIDF.Constants.Partition.alignof_esp_partition_t,
-          Default_Component_Value => 0;
+   with
+     Convention              => C,
+     Alignment               => ESPIDF.Constants.Partition.alignof_esp_partition_t,
+     Default_Component_Value => 0;
 
 end ESPIDF.Partition;
 ```
@@ -95,19 +96,21 @@ private
    type httpd_config_t_Storage is
      new C_Object_Storage
        (1 .. ESPIDF.Constants.HTTP_Server.sizeof_httpd_config_t)
-       with Convention => C,
-            Alignment  => ESPIDF.Constants.HTTP_Server.alignof_httpd_config_t;
+   with
+     Convention => C,
+     Alignment  => ESPIDF.Constants.HTTP_Server.alignof_httpd_config_t;
 
    procedure Initialize (Self : in out httpd_config_t);
 
    type httpd_config_t is limited record
       Storage : httpd_config_t_Storage;
    end record
-     with Convention  => C,
-          Alignment   => ESPIDF.Constants.HTTP_Server.alignof_httpd_config_t,
-          Finalizable =>
-            (Initialize           => Initialize,
-             Relaxed_Finalization => True);
+   with
+     Convention  => C,
+     Alignment   => ESPIDF.Constants.HTTP_Server.alignof_httpd_config_t,
+     Finalizable =>
+       (Initialize           => Initialize,
+        Relaxed_Finalization => True);
 
    pragma Compile_Time_Error
      (httpd_config_t'Size /= ESPIDF.Constants.HTTP_Server.sizeof_httpd_config_t
