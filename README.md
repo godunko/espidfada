@@ -1,14 +1,6 @@
 # ESP-IDF/Ada
 
-This is the base crate for Ada bindings to the ESP-IDF (Espressif IoT Development Framework).
-It provides the foundational type definitions and root package hierarchy required to build Ada applications for Espressif SoC platforms.
-
-## Key Features
-
- * Core Definitions: Establishes the root namespace and basic types used throughout the binding ecosystem.
- * Runtime Compatibility: Designed to be used in tandem with the ESP-IDF GNAT Runtime for a seamless embedded Ada experience. 
- * Hand-Crafted Specs: Eschews automated generation scripts in favor of clean, idiomatic Ada specs that respect the language's strong typing.
- * Modular Design: To minimize footprint, this crate contains only the essentials. Specialized functionality is distributed via separate crates.
+Base types and shared utilities for Ada bindings to the Espressif IoT Development Framework (ESP-IDF). Peripheral and service bindings are provided by separate crates.
 
 ## Ecosystem
 
@@ -29,11 +21,10 @@ The following crates build upon this base layer:
  * USB Device Stack ([espidf_tinyusb](https://github.com/godunko/espidf_tinyusb))
    * Mass Storage Class ([espidf_tinyusb_msc](https://github.com/godunko/espidf_tinyusb_msc))
  * Wi-Fi ([espidf_wifi](https://github.com/godunko/espidf_wifi))
- * (More components coming soon)
 
 ## Getting Started: Project Template
 
-To jumpstart your development, we provide templates that configure the GNAT project files and ESP-IDF build environment specifically for corresponsing MCU.
+Start with a project template for your MCU:
 
  * For ESP32-C3 (RISC-V): [ESP32C3 Project Template](https://github.com/godunko/esp32c3_template)
  * For ESP32 (Xtensa, LX6): [ESP32 Project Template](https://github.com/RREE/esp32_template)
@@ -41,7 +32,7 @@ To jumpstart your development, we provide templates that configure the GNAT proj
 
 ## Usage
 
-Once your project structure is set up from the Project Template, the development workflow involves the following steps:
+After setting up the project template:
 
 1. Ada Dependencies: Use Alire to include the binding's crates into your Ada application.
 
@@ -50,24 +41,52 @@ alr with espidf_console
 alr with espidf_driver_i2c
 ```
 
-2. ESP-IDF Components: The related ESP-IDF C components must be explicitly added to your main/CMakeLists.txt to ensure they are linked during the build process:
+2. ESP-IDF Components: Make the binding's ESP-IDF/Ada component available to
+ESP-IDF (for example, under `components/` or through `EXTRA_COMPONENT_DIRS`)
+and list it in your application's `main/CMakeLists.txt`. For example, an
+application using the GPIO binding declares:
 
-```
+```cmake
 idf_component_register(
-    REQUIRES esp_driver_i2c)
-...
-add_prebuilt_library(app_main "${COMPONENT_LIB}"
-    REQUIRES esp_driver_i2c)
+    REQUIRES espidfada_driver_gpio)
 ```
 
-3. Build Environment: Some binding crates contain C glue code, which can be compiled only inside the ESP-IDF build environment.
-By default only Ada sources are compiled (this allows Alire to build the crates standalone, e.g. when publishing), so the application must enable compilation of C sources in its `alire.toml`:
+The binding component declares its native ESP-IDF dependencies through
+`REQUIRES` or `PRIV_REQUIRES`. For example, `espidfada_driver_gpio` declares
+`PRIV_REQUIRES esp_driver_gpio espidfada`. ESP-IDF resolves these dependencies
+and links the required libraries transitively; the application does not need to
+repeat `esp_driver_gpio` in its requirements or in an `add_prebuilt_library`
+call. See [ESP-IDF component requirements](https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/build-system.html#component-requirements).
 
+Adding an Alire dependency alone does not register an ESP-IDF component.
+For a binding without ESP-IDF component integration, the application still
+needs to declare the native ESP-IDF dependencies explicitly. Also declare any
+native ESP-IDF components used directly by the application's C sources.
+
+3. Build
+
+Run `idf.py build` to compile and link the application.
+
+## Generated binding constants
+
+For bindings that use generated constants, add `DEPENDS espidfada_constants`
+to the application's `espidf_add_ada_application` call:
+
+```cmake
+espidf_add_ada_application(
+    TARGET "${COMPONENT_LIB}"
+    PROJECT_DIR "${PROJECT_DIR}"
+    OBJECT ".objs/app_main.o"
+    DEPENDS espidfada_constants)
 ```
-[configuration.values]
-espidf.Build_Environment = "espidf"
-```
 
-4. Build
+Build through `idf.py build` to generate constants for the current target and
+configuration. Before using `alr build` directly, run
+`idf.py espidfada_constants`; regenerate after changing the target, SDK, or
+`sdkconfig`. Direct Alire builds do not check whether generated files are current.
 
-The project can then be built using the standard ESP-IDF workflow (e.g., `idf.py build`), which will invoke the GNAT compiler for the Ada sources and link them with the specified IDF components.
+Use separate component/crate checkouts for simultaneous builds with different
+configurations.
+
+For binding authoring instructions, see
+[CONTRIBUTING.md](CONTRIBUTING.md#generating-c-type-metadata).
