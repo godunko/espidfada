@@ -107,15 +107,12 @@ private
    end record
    with
      Convention  => C,
+     Size        => ESPIDF.Constants.HTTP_Server.sizeof_httpd_config_t
+                      * C_Storage_Element'Size,
      Alignment   => ESPIDF.Constants.HTTP_Server.alignof_httpd_config_t,
      Finalizable =>
        (Initialize           => Initialize,
         Relaxed_Finalization => True);
-
-   pragma Compile_Time_Error
-     (httpd_config_t'Size /= ESPIDF.Constants.HTTP_Server.sizeof_httpd_config_t
-        * C_Storage_Element'Size,
-      "httpd_config_t size does not match C");
 
 end ESPIDF.HTTP_Server;
 ```
@@ -191,10 +188,13 @@ are configuration errors.
 
 Add `.gens` to GPR `Source_Dirs` and `/.gens/` to `.gitignore`; do not commit
 generated Ada sources. Use generated named numbers for storage bounds and
-`Alignment`, including on any outer record passed to C. Simple storage arrays
-do not need an additional size check; retain size checks for record wrappers.
-Do not add alignment checks when the same type explicitly specifies its
-alignment. Preserve C conventions and initialization.
+`Alignment`, including on any outer record passed to C. For record wrappers,
+also specify `Size` as the generated C size multiplied by
+`C_Storage_Element'Size`. Use these representation aspects instead of separate
+size or alignment checks. Simple storage arrays need only the generated bounds
+and explicit alignment. A separate `Object_Size` aspect is unnecessary for
+these wrappers: their storage field occupies the full C size, which already
+includes alignment padding. Preserve C conventions and initialization.
 
 Use `private with` for a constants package referenced only in the private
 part. Format type declarations as in the examples above, with `with` on its
