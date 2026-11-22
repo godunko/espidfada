@@ -50,7 +50,8 @@ def decode(symbols):
         if key in constants:
             raise ValueError(f"Duplicate Ada constant: {name}")
         value = int(fields[1], 10) - 1
-        if value <= 0:
+        # GNU C permits empty structs with sizeof == 0; alignment stays positive.
+        if value < 0 or (prefix == "espidfada_alignof_" and value == 0):
             raise ValueError(f"Invalid size/alignment encoding for {symbol}")
         constants[key] = (name, value)
     if not constants:

@@ -163,6 +163,8 @@ The first argument is a stable Ada identifier; the second is the exact C type,
 including a `struct` tag when required. Only type sizes and alignments are
 supported. Enum values, field offsets and arbitrary expressions are outside
 this interface.
+GNU C empty structs may have size zero; their generated size is preserved,
+producing a null storage array. Alignment must remain positive.
 
 Declare the Alire dependency on `espidfada`, and the CMake dependency on
 `espidfada` and the relevant SDK drivers. Register the probe after
@@ -175,6 +177,9 @@ idf_component_get_property(espidfada_dir espidfada COMPONENT_DIR)
 include("${espidfada_dir}/cmake/constants.cmake")
 espidfada_generate_constants(NAME GPIO SOURCE tools/gpio_constants.c)
 ```
+
+For components without C bridge sources, use `REQUIRES` for probe dependencies;
+ESP-IDF ignores `PRIV_REQUIRES` for components represented by interface libraries.
 
 The helper inherits the requesting component's compile environment and keeps
 the probe header private to the probe target. It compiles an unlinked object,
