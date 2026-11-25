@@ -1,14 +1,17 @@
 name = "espidfada"
 version = "0.3.0-dev"
 website = "https://github.com/godunko/espidfada"
-description = "ESP-IDF/Ada: common types and utilities for ESP-IDF bindings"
+description = "ESP-IDF/Ada: base types and shared utilities"
 long-description = """
-Root crate of the Ada bindings for the Espressif IoT Development Framework (ESP-IDF).
+Base library for Ada bindings to the Espressif IoT Development Framework (ESP-IDF).
 
-Provides definitions shared by all `espidfada_*` binding crates:
-- C types used across ESP-IDF APIs (`esp_err_t`, `size_t`, ...);
-- conversion of strings between Ada and C;
-- conversion of `esp_err_t` error codes into Ada exceptions.
+Provides common definitions and utilities used by the `espidfada_*` bindings crates:
+- C-compatible types and ESP-IDF error codes;
+- C string handling and conversion between Ada and C strings;
+- error checking that raises `ESPIDF_Error` for unsuccessful ESP-IDF calls;
+- ESP-IDF build integration for generating bindings constants for the current target and configuration.
+
+Peripheral and service bindings are provided by separate crates.
 """
 
 authors = ["Vadim Godunko"]
