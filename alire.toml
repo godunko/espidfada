@@ -1,5 +1,5 @@
 name = "espidfada"
-version = "0.3.0-dev"
+version = "0.3.0"
 website = "https://github.com/godunko/espidfada"
 description = "ESP-IDF/Ada: base types and shared utilities"
 long-description = """
